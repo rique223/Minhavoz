@@ -99,6 +99,39 @@ Voices come in `low` / `medium` / `high` quality. `medium` is the recommended ba
 
 ---
 
+## Setup on a new machine
+
+A fresh **Windows** checkout, start to finish. Items in *Runtime setup* are per-machine
+and are **not** stored in git — redo them on every computer.
+
+1. **Install the prerequisites** (see the list under *Build & run* below): Node.js 18+,
+   Rust with the MSVC toolchain (`rustup default stable-msvc`), VS Build Tools with the
+   *Desktop development with C++* workload, and the WebView2 Runtime.
+2. **Clone and install JS deps:**
+   ```powershell
+   git clone git@github.com:rique223/Minhavoz.git
+   cd Minhavoz
+   npm install
+   ```
+   The Piper binary (`resources/piper/`) and the default voice model
+   (`resources/voices/pt_BR-cadu-medium.onnx`) are committed, so a normal clone pulls
+   them — no extra download and no Git LFS needed. Rust crates are fetched by Cargo on
+   the first build.
+3. **Run it from an _elevated_ terminal.** Because the app forces `requireAdministrator`
+   (see *Caveats*), a non-elevated terminal can't launch the dev exe — `CreateProcess`
+   fails with "elevation required". Open **PowerShell as Administrator**, then:
+   ```powershell
+   npm run tauri dev
+   ```
+   The first run compiles the whole Rust tree (minutes) and shows a **UAC prompt** when
+   the window launches.
+4. **Runtime setup (per machine, not in git):**
+   - Install **VB-CABLE** and route audio (steps 1–3 at the top of this README).
+   - **Re-enter your OpenAI API key** in Settings if you use cloud TTS — keys live in the
+     **Windows Credential Manager**, which doesn't travel with the repo.
+
+---
+
 ## Build & run (developers)
 
 ### Prerequisites
