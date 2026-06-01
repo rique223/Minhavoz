@@ -1,0 +1,479 @@
+:root {
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.4;
+  color: #0f0f0f;
+  background-color: #f6f6f6;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px;
+  min-height: 100vh;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.head h1 {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.head-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot {
+  color: #c4c4c4;
+  font-size: 0.9rem;
+}
+
+.dot.live {
+  color: #2ecc71;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.input {
+  width: 100%;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 1.05rem;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #cfcfcf;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.controls {
+  justify-content: space-between;
+}
+
+/* ── Rate slider ────────────────────────────────────────────────────────────
+   The whole control shares ONE coordinate system. A native range thumb's centre
+   only travels between `thumb/2` from each edge, so the rail, the fill and the
+   guide ticks are all inset by exactly that much — then a guide at X% lines up
+   with the thumb centre at X% for the full length of the track, not just mid. */
+.rate-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.rate-label,
+.rate-val {
+  padding-top: 5px;
+}
+
+.rate-val {
+  min-width: 3.4em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: #396cd8;
+}
+
+.rate-control {
+  --thumb: 16px;
+  --inset: calc(var(--thumb) / 2);
+  position: relative;
+  flex: 1;
+  height: 40px;
+}
+
+/* background rail + filled portion (fill ends exactly under the thumb centre) */
+.rate-rail {
+  position: absolute;
+  left: var(--inset);
+  right: var(--inset);
+  top: 8px;
+  height: 6px;
+  border-radius: 999px;
+  background: #dcdcdc;
+}
+
+.rate-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #5a8dff, #396cd8);
+}
+
+/* the real input sits transparent on top; only its thumb is visible */
+.rate-slider {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  width: 100%;
+  height: 22px;
+  margin: 0;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.rate-slider:focus {
+  outline: none;
+}
+
+.rate-slider::-webkit-slider-runnable-track {
+  height: 22px;
+  background: transparent;
+}
+.rate-slider::-moz-range-track {
+  height: 22px;
+  background: transparent;
+}
+
+.rate-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: var(--thumb);
+  height: var(--thumb);
+  margin-top: 3px; /* centre the 16px thumb on the 22px track (= rail centre) */
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #396cd8;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  cursor: grab;
+  transition: transform 0.08s ease;
+}
+.rate-slider::-moz-range-thumb {
+  width: var(--thumb);
+  height: var(--thumb);
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #396cd8;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  cursor: grab;
+}
+.rate-slider:active::-webkit-slider-thumb {
+  transform: scale(1.15);
+  cursor: grabbing;
+}
+.rate-slider:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px rgba(57, 108, 216, 0.25);
+}
+
+/* guide ticks + labels, inset to the same travel band as the thumb */
+.rate-guides {
+  position: absolute;
+  left: var(--inset);
+  right: var(--inset);
+  top: 21px;
+  height: 18px;
+}
+
+.rate-guide {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 14px; /* keeps tick-only guides clickable */
+  padding: 0 2px;
+  border: none;
+  background: transparent;
+  color: #8a8a8a;
+  font-size: 0.66rem;
+  line-height: 1;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.rate-guide .tick {
+  width: 1px;
+  height: 5px;
+  background: #c4c4c4;
+  border-radius: 1px;
+}
+
+.rate-guide.tick-only .tick {
+  height: 7px;
+}
+
+.rate-guide:hover {
+  color: #396cd8;
+}
+.rate-guide:hover .tick {
+  background: #396cd8;
+}
+
+.rate-guide.active {
+  color: #396cd8;
+  font-weight: 700;
+}
+.rate-guide.active .tick {
+  background: #396cd8;
+  height: 8px;
+}
+
+.phrases {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  font-size: 0.85rem;
+  padding: 6px 10px;
+  border-radius: 14px;
+  background: #ececec;
+  border: 1px solid #d8d8d8;
+}
+
+.chip-key {
+  font-size: 0.7rem;
+  font-weight: 600;
+  opacity: 0.6;
+  margin-right: 5px;
+}
+
+/* Input/select paired with a button (Browse…, Test) share a row. */
+.field .row input[type="text"],
+.field .row select {
+  flex: 1;
+  min-width: 0;
+}
+
+button {
+  cursor: pointer;
+  border-radius: 8px;
+  border: 1px solid #cfcfcf;
+  background: #fff;
+  padding: 8px 12px;
+  font: inherit;
+  color: inherit;
+}
+
+button:hover:not(:disabled) {
+  border-color: #396cd8;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+button.primary {
+  background: #396cd8;
+  color: #fff;
+  border-color: #396cd8;
+  flex: 1;
+}
+
+button.icon {
+  padding: 4px 8px;
+  background: transparent;
+  border: none;
+}
+
+select,
+input[type="text"] {
+  font: inherit;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #cfcfcf;
+  background: #fff;
+  color: inherit;
+}
+
+.status {
+  font-size: 0.85rem;
+  color: #555;
+  margin: 0;
+  min-height: 1.2em;
+}
+
+.warn {
+  font-size: 0.85rem;
+  color: #b00020;
+  background: #fde7ea;
+  border: 1px solid #f5b8c0;
+  border-radius: 6px;
+  padding: 6px 8px;
+  margin: 0;
+}
+
+/* Inline "Retry cloud" action inside the fallback banner. */
+.warn button.link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #b00020;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 100;
+}
+
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings.modal {
+  background: #f6f6f6;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 14px 16px;
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: -14px;
+  background: inherit;
+  margin: -14px -16px 0;
+  padding: 10px 16px;
+  border-bottom: 1px solid #ddd;
+}
+
+.settings h2 {
+  font-size: 1rem;
+  margin: 0 0 4px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 0.85rem;
+}
+
+.field > span {
+  color: #555;
+}
+
+.field.inline {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.field input[type="text"],
+.field select,
+.field input[type="range"] {
+  width: 100%;
+}
+
+.phrase-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.phrase-editor input[type="text"] {
+  flex: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: #f6f6f6;
+    background-color: #2f2f2f;
+  }
+  .input,
+  select,
+  input[type="text"],
+  button {
+    background: #1f1f1f;
+    color: #f6f6f6;
+    border-color: #444;
+  }
+  button.primary {
+    background: #396cd8;
+  }
+  .chip {
+    background: #3a3a3a;
+    border-color: #4a4a4a;
+  }
+  .settings.modal {
+    background: #2f2f2f;
+    border-color: #555;
+  }
+  .modal-head {
+    border-bottom-color: #444;
+  }
+  .status,
+  .rate-row {
+    color: #bbb;
+  }
+  .rate-rail {
+    background: #4a4a4a;
+  }
+  .rate-guide {
+    color: #9a9a9a;
+  }
+  .rate-guide .tick {
+    background: #5e5e5e;
+  }
+  .rate-slider::-webkit-slider-thumb,
+  .rate-slider::-moz-range-thumb {
+    background: #f6f6f6;
+  }
+  .field > span,
+  .phrase-editor {
+    color: #bbb;
+  }
+  .warn {
+    color: #ffb3bd;
+    background: #3a1f24;
+    border-color: #6b2a33;
+  }
+}
